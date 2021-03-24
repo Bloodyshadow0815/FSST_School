@@ -42,7 +42,7 @@ int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
      * IV size for *most* modes is the same as the block size. For AES this
      * is 128 bits
      */
-    if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+    if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
         handleErrors();
 
     /*
@@ -87,7 +87,7 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
      * IV size for *most* modes is the same as the block size. For AES this
      * is 128 bits
      */
-    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
         handleErrors();
 
     /*
@@ -121,22 +121,28 @@ int main (void)
      */
 
     /* A 256 bit key */
-    unsigned char *key = (unsigned char *)"BBBBBBBBBBBBBBBB";
+    unsigned char *key = (unsigned char *)"BBBBBBBBBBBBBBB";
 
     /* A 128 bit IV */
     unsigned char *iv = (unsigned char *)"BBBBBBBBBBBBBBB";
 
     /* Message to be encrypted */
     unsigned char *plaintext =
-        (unsigned char *)"Schoene Krypto Welt";
+        (unsigned char *)"Schoene Crypto Welt\r\r\r\r\r\r\r\r\r\r\r\r\r";
 
     /*
      * Buffer for ciphertext. Ensure the buffer is long enough for the
      * ciphertext which may be longer than the plaintext, depending on the
      * algorithm and mode.
      */
+    //unsigned char ciphertext[32]={
+    /*    0xAA, 0xE3, 0x65, 0x27, 0x2C, 0x81, 0x07, 0x8A,
+        0xB6, 0x11, 0x6B, 0x36, 0x18, 0x31, 0xD0, 0xF6,
+        0xA5, 0xD3, 0xC8, 0x58, 0x7E, 0x94, 0x6B, 0x53,
+        0X0B, 0x79, 0x57, 0x54, 0x31, 0x07, 0xF1, 0x5E
+    };
+    */
     unsigned char ciphertext[128];
-
     /* Buffer for the decrypted text */
     unsigned char decryptedtext[128];
 
@@ -145,7 +151,7 @@ int main (void)
     /* Encrypt the plaintext */
     ciphertext_len = encrypt (plaintext, strlen ((char *)plaintext), key, iv,
                               ciphertext);
-
+    printf("%d\n",ciphertext_len);
     /* Do something useful with the ciphertext here */
     printf("Ciphertext is:\n");
     BIO_dump_fp (stdout, (const char *)ciphertext, ciphertext_len);
